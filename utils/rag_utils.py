@@ -71,6 +71,13 @@ def process_uploaded_file(uploaded_file):
             tmp_file = tmp.name
 
         documents   = load_documents(tmp_file, file_ext)
+
+        # Replace temp path with the real filename in metadata
+        for doc in documents:
+            doc.metadata["source"] = uploaded_file.name
+            if "page" in doc.metadata:
+                doc.metadata["page"] = doc.metadata["page"] + 1  # 1-indexed
+
         chunks      = split_documents(documents)
         vectorstore = build_vectorstore(chunks)
 
